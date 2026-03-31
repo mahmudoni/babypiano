@@ -65,8 +65,7 @@ The app uses separate entrypoints for development and production:
 
 ## GitHub Automation
 
-- `CI`: runs `flutter analyze` and `flutter test` on pushes and pull requests
-- `Deploy Web`: builds the Flutter web app and publishes it to GitHub Pages
+- `Web`: a single workflow that runs `flutter analyze` and `flutter test`, then deploys the web build from `master` to GitHub Pages
 
 If GitHub Pages is not enabled yet for the repository, do this one time:
 
@@ -74,7 +73,7 @@ If GitHub Pages is not enabled yet for the repository, do this one time:
 2. Go to `Settings > Pages`
 3. Set `Source` to `GitHub Actions`
 
-After that, every push to `master` will trigger a fresh web deployment.
+After that, every push to `master` will verify the app and publish a fresh web deployment.
 
 ## Audio
 
