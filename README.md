@@ -63,6 +63,19 @@ The app uses separate entrypoints for development and production:
 - `flutter analyze`
 - `flutter test`
 
+## GitHub Automation
+
+- `CI`: runs `flutter analyze` and `flutter test` on pushes and pull requests
+- `Deploy Web`: builds the Flutter web app and publishes it to GitHub Pages
+
+If GitHub Pages is not enabled yet for the repository, do this one time:
+
+1. Open the repository on GitHub
+2. Go to `Settings > Pages`
+3. Set `Source` to `GitHub Actions`
+
+After that, every push to `master` will trigger a fresh web deployment.
+
 ## Audio
 
 The repo includes generated local WAV assets for a zero-setup demo experience.
