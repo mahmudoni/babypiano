@@ -8,6 +8,7 @@ import '../../../core/providers/bootstrap_providers.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/widgets/soft_panel.dart';
 import '../../settings/application/settings_controller.dart';
+import '../../settings/domain/app_settings.dart';
 import '../../settings/presentation/settings_sheet.dart';
 import '../application/calm_tiles_hud_controller.dart';
 import '../data/game_progress_repository.dart';
@@ -60,193 +61,133 @@ class _CalmTilesScreenState extends ConsumerState<CalmTilesScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: <Color>[
-              Color(0xFF11253B),
-              Color(0xFF163458),
+              Color(0xFF102337),
+              Color(0xFF18385A),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    IconButton.filledTonal(
-                      onPressed: () => context.go('/'),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: AnimatedBuilder(
-                        animation: _hudController,
-                        builder: (BuildContext context, _) {
-                          return Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: <Widget>[
-                              _ScoreChip(
-                                label: l10n.scoreLabel,
-                                value: _hudController.score.toString(),
-                              ),
-                              _ScoreChip(
-                                label: l10n.comboLabel,
-                                value: _hudController.combo.toString(),
-                              ),
-                              _ScoreChip(
-                                label: l10n.bestLabel,
-                                value: _hudController.bestScore.toString(),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton.filledTonal(
-                      onPressed: _openSettings,
-                      icon: const Icon(Icons.tune_rounded),
-                    ),
-                    const SizedBox(width: 8),
-                    AnimatedBuilder(
-                      animation: _hudController,
-                      builder: (BuildContext context, _) {
-                        return IconButton.filled(
-                          onPressed: _togglePause,
-                          icon: Icon(
-                            _hudController.isPaused
-                                ? Icons.play_arrow_rounded
-                                : Icons.pause_rounded,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                AnimatedBuilder(
-                  animation: _hudController,
-                  builder: (BuildContext context, _) {
-                    return SoftPanel(
-                      color: Colors.white.withValues(alpha: 0.18),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 14,
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          const Icon(
-                            Icons.favorite_rounded,
-                            color: AppPalette.honey,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              _coachText(context, _hudController.coachState),
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: <Widget>[
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTapDown: (TapDownDetails details) {
-                            if (_hudController.isPaused) {
-                              return;
-                            }
-                            final lane = _game.resolveLane(details.localPosition.dx);
-                            _game.handleLaneTap(lane);
-                          },
-                          child: GameWidget<CalmTilesGame>(
-                            game: _game,
-                          ),
-                        ),
-                        if (settings.laneHintsEnabled)
-                          Positioned(
-                            left: 20,
-                            right: 20,
-                            bottom: 26,
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _LaneHint(
-                                    label: l10n.calmTilesHintLeft,
-                                    color: AppPalette.coral,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: _LaneHint(
-                                    label: l10n.calmTilesHintRight,
-                                    color: AppPalette.teal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        AnimatedBuilder(
-                          animation: _hudController,
-                          builder: (BuildContext context, _) {
-                            if (!_hudController.isPaused) {
-                              return const SizedBox.shrink();
-                            }
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final isWide = constraints.maxWidth >= 1020;
+              final horizontalPadding = constraints.maxWidth < 760 ? 16.0 : 24.0;
 
-                            return Center(
-                              child: ConstrainedBox(
-                                constraints: const BoxConstraints(maxWidth: 320),
-                                child: SoftPanel(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text(
-                                        l10n.pauseButtonLabel,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                            ?.copyWith(fontWeight: FontWeight.w900),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        l10n.pauseBody,
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(height: 1.45),
-                                      ),
-                                      const SizedBox(height: 18),
-                                      ElevatedButton(
-                                        onPressed: _togglePause,
-                                        child: Text(l10n.resumeButtonLabel),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+              return Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  16,
+                  horizontalPadding,
+                  16,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1180),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            IconButton.filledTonal(
+                              onPressed: () => context.go('/'),
+                              icon: const Icon(Icons.arrow_back_rounded),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                l10n.calmTilesTitle,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                               ),
-                            );
-                          },
+                            ),
+                            IconButton.filledTonal(
+                              onPressed: _openSettings,
+                              icon: const Icon(Icons.tune_rounded),
+                            ),
+                            const SizedBox(width: 8),
+                            AnimatedBuilder(
+                              animation: _hudController,
+                              builder: (BuildContext context, _) {
+                                return IconButton.filled(
+                                  onPressed: _togglePause,
+                                  icon: Icon(
+                                    _hudController.isPaused
+                                        ? Icons.play_arrow_rounded
+                                        : Icons.pause_rounded,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: isWide
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 320,
+                                      child: _CalmTilesSidePanel(
+                                        hudController: _hudController,
+                                        coachText: _coachText(
+                                          context,
+                                          _hudController.coachState,
+                                        ),
+                                        laneHintsEnabled: settings.laneHintsEnabled,
+                                        leftHint: l10n.calmTilesHintLeft,
+                                        rightHint: l10n.calmTilesHintRight,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 20),
+                                    Expanded(
+                                      child: _GameSurface(
+                                        game: _game,
+                                        hudController: _hudController,
+                                        settings: settings,
+                                        onTogglePause: _togglePause,
+                                        pauseTitle: l10n.pauseButtonLabel,
+                                        pauseBody: l10n.pauseBody,
+                                        resumeLabel: l10n.resumeButtonLabel,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  children: <Widget>[
+                                    _CalmTilesTopPanel(
+                                      hudController: _hudController,
+                                      coachText: _coachText(
+                                        context,
+                                        _hudController.coachState,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Expanded(
+                                      child: _GameSurface(
+                                        game: _game,
+                                        hudController: _hudController,
+                                        settings: settings,
+                                        onTogglePause: _togglePause,
+                                        pauseTitle: l10n.pauseButtonLabel,
+                                        pauseBody: l10n.pauseBody,
+                                        resumeLabel: l10n.resumeButtonLabel,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -297,6 +238,264 @@ class _CalmTilesScreenState extends ConsumerState<CalmTilesScreen> {
       _game.resumeEngine();
       await ref.read(audioControllerProvider).resumeMusic();
     }
+  }
+}
+
+class _CalmTilesTopPanel extends StatelessWidget {
+  const _CalmTilesTopPanel({
+    required this.hudController,
+    required this.coachText,
+  });
+
+  final CalmTilesHudController hudController;
+  final String coachText;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return AnimatedBuilder(
+      animation: hudController,
+      builder: (BuildContext context, _) {
+        return Column(
+          children: <Widget>[
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: <Widget>[
+                _ScoreChip(
+                  label: l10n.scoreLabel,
+                  value: hudController.score.toString(),
+                ),
+                _ScoreChip(
+                  label: l10n.comboLabel,
+                  value: hudController.combo.toString(),
+                ),
+                _ScoreChip(
+                  label: l10n.bestLabel,
+                  value: hudController.bestScore.toString(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SoftPanel(
+              color: Colors.white.withValues(alpha: 0.18),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 14,
+              ),
+              child: Row(
+                children: <Widget>[
+                  const Icon(
+                    Icons.favorite_rounded,
+                    color: AppPalette.honey,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      coachText,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CalmTilesSidePanel extends StatelessWidget {
+  const _CalmTilesSidePanel({
+    required this.hudController,
+    required this.coachText,
+    required this.laneHintsEnabled,
+    required this.leftHint,
+    required this.rightHint,
+  });
+
+  final CalmTilesHudController hudController;
+  final String coachText;
+  final bool laneHintsEnabled;
+  final String leftHint;
+  final String rightHint;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return AnimatedBuilder(
+      animation: hudController,
+      builder: (BuildContext context, _) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: <Widget>[
+                _ScoreChip(
+                  label: l10n.scoreLabel,
+                  value: hudController.score.toString(),
+                ),
+                _ScoreChip(
+                  label: l10n.comboLabel,
+                  value: hudController.combo.toString(),
+                ),
+                _ScoreChip(
+                  label: l10n.bestLabel,
+                  value: hudController.bestScore.toString(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SoftPanel(
+              color: Colors.white.withValues(alpha: 0.18),
+              child: Text(
+                coachText,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  height: 1.45,
+                ),
+              ),
+            ),
+            if (laneHintsEnabled) ...<Widget>[
+              const SizedBox(height: 16),
+              _LaneHint(
+                label: leftHint,
+                color: AppPalette.coral,
+              ),
+              const SizedBox(height: 12),
+              _LaneHint(
+                label: rightHint,
+                color: AppPalette.teal,
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _GameSurface extends StatelessWidget {
+  const _GameSurface({
+    required this.game,
+    required this.hudController,
+    required this.settings,
+    required this.onTogglePause,
+    required this.pauseTitle,
+    required this.pauseBody,
+    required this.resumeLabel,
+  });
+
+  final CalmTilesGame game;
+  final CalmTilesHudController hudController;
+  final AppSettings settings;
+  final Future<void> Function() onTogglePause;
+  final String pauseTitle;
+  final String pauseBody;
+  final String resumeLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          MouseRegion(
+            cursor: hudController.isPaused
+                ? SystemMouseCursors.basic
+                : SystemMouseCursors.click,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapDown: (TapDownDetails details) {
+                if (hudController.isPaused) {
+                  return;
+                }
+                final lane = game.resolveLane(details.localPosition.dx);
+                game.handleLaneTap(lane);
+              },
+              child: GameWidget<CalmTilesGame>(
+                game: game,
+              ),
+            ),
+          ),
+          if (settings.laneHintsEnabled)
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 26,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: _LaneHint(
+                      label: context.l10n.calmTilesHintLeft,
+                      color: AppPalette.coral,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _LaneHint(
+                      label: context.l10n.calmTilesHintRight,
+                      color: AppPalette.teal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          AnimatedBuilder(
+            animation: hudController,
+            builder: (BuildContext context, _) {
+              if (!hudController.isPaused) {
+                return const SizedBox.shrink();
+              }
+
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 320),
+                  child: SoftPanel(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          pauseTitle,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w900),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          pauseBody,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(height: 1.45),
+                        ),
+                        const SizedBox(height: 18),
+                        ElevatedButton(
+                          onPressed: onTogglePause,
+                          child: Text(resumeLabel),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 

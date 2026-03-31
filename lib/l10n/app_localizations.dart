@@ -104,19 +104,19 @@ abstract class AppLocalizations {
   /// No description provided for @homeEyebrow.
   ///
   /// In en, this message translates to:
-  /// **'Gentle rhythm play for little hands'**
+  /// **'Calm play for little hands'**
   String get homeEyebrow;
 
   /// No description provided for @homeHeadline.
   ///
   /// In en, this message translates to:
-  /// **'A baby-friendly piano tiles game with music, memory, and no harsh fail states.'**
+  /// **'Simple piano play for babies.'**
   String get homeHeadline;
 
   /// No description provided for @homeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Start with big colorful blocks, repeat simple patterns, and let the child explore sound at a calm pace.'**
+  /// **'Tap bright tiles, hear soft notes, and follow easy patterns at a calm pace.'**
   String get homeSubtitle;
 
   /// No description provided for @homeFeatureNoFail.

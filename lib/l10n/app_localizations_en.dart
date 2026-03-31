@@ -12,13 +12,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Baby Piano';
 
   @override
-  String get homeEyebrow => 'Gentle rhythm play for little hands';
+  String get homeEyebrow => 'Calm play for little hands';
 
   @override
-  String get homeHeadline => 'A baby-friendly piano tiles game with music, memory, and no harsh fail states.';
+  String get homeHeadline => 'Simple piano play for babies.';
 
   @override
-  String get homeSubtitle => 'Start with big colorful blocks, repeat simple patterns, and let the child explore sound at a calm pace.';
+  String get homeSubtitle => 'Tap bright tiles, hear soft notes, and follow easy patterns at a calm pace.';
 
   @override
   String get homeFeatureNoFail => 'No hard fail';

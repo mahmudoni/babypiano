@@ -42,9 +42,7 @@ class HomeScreen extends ConsumerWidget {
               final isWide = constraints.maxWidth >= 1080;
               final horizontalPadding = isCompact ? 20.0 : 32.0;
               final contentWidth = constraints.maxWidth - (horizontalPadding * 2);
-              final cardWidth = isWide
-                  ? (contentWidth - 40) / 3
-                  : contentWidth >= 720
+              final cardWidth = contentWidth >= 720
                   ? (contentWidth - 20) / 2
                   : contentWidth;
 
@@ -135,63 +133,122 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Wrap(
-                          spacing: 20,
-                          runSpacing: 20,
-                          children: <Widget>[
-                            SizedBox(
-                              width: cardWidth,
-                              child: GameModeCard(
-                                title: l10n.calmTilesTitle,
-                                description: l10n.calmTilesDescription,
-                                buttonLabel: l10n.calmTilesPrimaryAction,
-                                icon: Icons.view_stream_rounded,
-                                accentColor: AppPalette.coral,
-                                onPressed: () async {
-                                  await audioController.unlockAudio();
-                                  if (!context.mounted) {
-                                    return;
-                                  }
-                                  context.go(CalmTilesScreen.routePath);
-                                },
-                              ),
+                        if (isWide)
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Expanded(
+                                  child: GameModeCard(
+                                    title: l10n.calmTilesTitle,
+                                    description: l10n.calmTilesDescription,
+                                    buttonLabel: l10n.calmTilesPrimaryAction,
+                                    icon: Icons.view_stream_rounded,
+                                    accentColor: AppPalette.coral,
+                                    onPressed: () async {
+                                      await audioController.unlockAudio();
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      context.go(CalmTilesScreen.routePath);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: GameModeCard(
+                                    title: l10n.freePlayTitle,
+                                    description: l10n.freePlayDescription,
+                                    buttonLabel: l10n.freePlayPrimaryAction,
+                                    icon: Icons.piano_rounded,
+                                    accentColor: AppPalette.teal,
+                                    onPressed: () async {
+                                      await audioController.unlockAudio();
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      context.go(FreePlayScreen.routePath);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: GameModeCard(
+                                    title: l10n.memoryEchoTitle,
+                                    description: l10n.memoryEchoDescription,
+                                    buttonLabel: l10n.memoryEchoPrimaryAction,
+                                    icon: Icons.psychology_alt_rounded,
+                                    accentColor: AppPalette.honey,
+                                    onPressed: () async {
+                                      await audioController.unlockAudio();
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      context.go(MemoryEchoScreen.routePath);
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              width: cardWidth,
-                              child: GameModeCard(
-                                title: l10n.freePlayTitle,
-                                description: l10n.freePlayDescription,
-                                buttonLabel: l10n.freePlayPrimaryAction,
-                                icon: Icons.piano_rounded,
-                                accentColor: AppPalette.teal,
-                                onPressed: () async {
-                                  await audioController.unlockAudio();
-                                  if (!context.mounted) {
-                                    return;
-                                  }
-                                  context.go(FreePlayScreen.routePath);
-                                },
+                          )
+                        else
+                          Wrap(
+                            spacing: 20,
+                            runSpacing: 20,
+                            children: <Widget>[
+                              SizedBox(
+                                width: cardWidth,
+                                child: GameModeCard(
+                                  title: l10n.calmTilesTitle,
+                                  description: l10n.calmTilesDescription,
+                                  buttonLabel: l10n.calmTilesPrimaryAction,
+                                  icon: Icons.view_stream_rounded,
+                                  accentColor: AppPalette.coral,
+                                  onPressed: () async {
+                                    await audioController.unlockAudio();
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    context.go(CalmTilesScreen.routePath);
+                                  },
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: cardWidth,
-                              child: GameModeCard(
-                                title: l10n.memoryEchoTitle,
-                                description: l10n.memoryEchoDescription,
-                                buttonLabel: l10n.memoryEchoPrimaryAction,
-                                icon: Icons.psychology_alt_rounded,
-                                accentColor: AppPalette.honey,
-                                onPressed: () async {
-                                  await audioController.unlockAudio();
-                                  if (!context.mounted) {
-                                    return;
-                                  }
-                                  context.go(MemoryEchoScreen.routePath);
-                                },
+                              SizedBox(
+                                width: cardWidth,
+                                child: GameModeCard(
+                                  title: l10n.freePlayTitle,
+                                  description: l10n.freePlayDescription,
+                                  buttonLabel: l10n.freePlayPrimaryAction,
+                                  icon: Icons.piano_rounded,
+                                  accentColor: AppPalette.teal,
+                                  onPressed: () async {
+                                    await audioController.unlockAudio();
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    context.go(FreePlayScreen.routePath);
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                              SizedBox(
+                                width: cardWidth,
+                                child: GameModeCard(
+                                  title: l10n.memoryEchoTitle,
+                                  description: l10n.memoryEchoDescription,
+                                  buttonLabel: l10n.memoryEchoPrimaryAction,
+                                  icon: Icons.psychology_alt_rounded,
+                                  accentColor: AppPalette.honey,
+                                  onPressed: () async {
+                                    await audioController.unlockAudio();
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    context.go(MemoryEchoScreen.routePath);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         const SizedBox(height: 18),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4),

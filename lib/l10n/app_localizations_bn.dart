@@ -12,13 +12,13 @@ class AppLocalizationsBn extends AppLocalizations {
   String get appName => 'বেবি পিয়ানো';
 
   @override
-  String get homeEyebrow => 'ছোট্ট হাতের জন্য নরম ছন্দের খেলা';
+  String get homeEyebrow => 'ছোট্ট হাতের জন্য calm play';
 
   @override
-  String get homeHeadline => 'মিউজিক, মেমরি আর একদম soft gameplay-সহ baby-friendly piano tiles game.';
+  String get homeHeadline => 'Baby der jonne simple piano play.';
 
   @override
-  String get homeSubtitle => 'বড় colourful block, repeat হওয়া pattern, আর শান্ত speed দিয়ে বাচ্চাকে sound explore করতে দাও।';
+  String get homeSubtitle => 'Bright tile-এ tap করো, soft note শোনো, আর easy pattern follow করো।';
 
   @override
   String get homeFeatureNoFail => 'কঠিন game over নেই';
