@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_breakpoints.dart';
 import '../../../core/l10n/localization_extension.dart';
 import '../../../core/providers/bootstrap_providers.dart';
 import '../../../core/theme/app_palette.dart';
@@ -28,16 +27,26 @@ class HomeScreen extends ConsumerWidget {
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: AppPalette.backgroundGradient,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: <Color>[
+              Color(0xFFFFFCF7),
+              Color(0xFFF4F7FB),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              final isCompact = constraints.maxWidth < AppBreakpoints.compact;
+              final isCompact = constraints.maxWidth < 760;
+              final isWide = constraints.maxWidth >= 1080;
               final horizontalPadding = isCompact ? 20.0 : 32.0;
+              final contentWidth = constraints.maxWidth - (horizontalPadding * 2);
+              final cardWidth = isWide
+                  ? (contentWidth - 40) / 3
+                  : contentWidth >= 720
+                  ? (contentWidth - 20) / 2
+                  : contentWidth;
 
               return SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
@@ -55,22 +64,21 @@ class HomeScreen extends ConsumerWidget {
                         Row(
                           children: <Widget>[
                             Expanded(
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: 12,
-                                runSpacing: 8,
+                              child: Row(
                                 children: <Widget>[
                                   Text(
                                     l10n.appName,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headlineMedium
+                                        .headlineSmall
                                         ?.copyWith(fontWeight: FontWeight.w900),
                                   ),
-                                  if (!config.isProduction)
+                                  if (!config.isProduction) ...<Widget>[
+                                    const SizedBox(width: 12),
                                     Chip(
                                       label: Text(config.environmentLabel),
                                     ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -81,9 +89,9 @@ class HomeScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 28),
                         SoftPanel(
-                          padding: EdgeInsets.all(isCompact ? 22 : 28),
+                          padding: EdgeInsets.all(isCompact ? 24 : 30),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -95,29 +103,28 @@ class HomeScreen extends ConsumerWidget {
                                     ?.copyWith(
                                       color: AppPalette.teal,
                                       fontWeight: FontWeight.w800,
-                                      letterSpacing: 0.3,
                                     ),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               Text(
                                 l10n.homeHeadline,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .displaySmall
+                                    .headlineLarge
                                     ?.copyWith(fontWeight: FontWeight.w900),
                               ),
-                              const SizedBox(height: 14),
+                              const SizedBox(height: 12),
                               Text(
                                 l10n.homeSubtitle,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .titleMedium
+                                    .bodyLarge
                                     ?.copyWith(height: 1.45),
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 20),
                               Wrap(
-                                spacing: 12,
-                                runSpacing: 12,
+                                spacing: 10,
+                                runSpacing: 10,
                                 children: <Widget>[
                                   _FeatureChip(label: l10n.homeFeatureNoFail),
                                   _FeatureChip(label: l10n.homeFeatureBigTiles),
@@ -132,71 +139,68 @@ class HomeScreen extends ConsumerWidget {
                           spacing: 20,
                           runSpacing: 20,
                           children: <Widget>[
-                            GameModeCard(
-                              title: l10n.calmTilesTitle,
-                              description: l10n.calmTilesDescription,
-                              buttonLabel: l10n.calmTilesPrimaryAction,
-                              icon: Icons.view_stream_rounded,
-                              accentColor: AppPalette.coral,
-                              onPressed: () async {
-                                await audioController.unlockAudio();
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                context.go(CalmTilesScreen.routePath);
-                              },
+                            SizedBox(
+                              width: cardWidth,
+                              child: GameModeCard(
+                                title: l10n.calmTilesTitle,
+                                description: l10n.calmTilesDescription,
+                                buttonLabel: l10n.calmTilesPrimaryAction,
+                                icon: Icons.view_stream_rounded,
+                                accentColor: AppPalette.coral,
+                                onPressed: () async {
+                                  await audioController.unlockAudio();
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+                                  context.go(CalmTilesScreen.routePath);
+                                },
+                              ),
                             ),
-                            GameModeCard(
-                              title: l10n.freePlayTitle,
-                              description: l10n.freePlayDescription,
-                              buttonLabel: l10n.freePlayPrimaryAction,
-                              icon: Icons.piano_rounded,
-                              accentColor: AppPalette.teal,
-                              onPressed: () async {
-                                await audioController.unlockAudio();
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                context.go(FreePlayScreen.routePath);
-                              },
+                            SizedBox(
+                              width: cardWidth,
+                              child: GameModeCard(
+                                title: l10n.freePlayTitle,
+                                description: l10n.freePlayDescription,
+                                buttonLabel: l10n.freePlayPrimaryAction,
+                                icon: Icons.piano_rounded,
+                                accentColor: AppPalette.teal,
+                                onPressed: () async {
+                                  await audioController.unlockAudio();
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+                                  context.go(FreePlayScreen.routePath);
+                                },
+                              ),
                             ),
-                            GameModeCard(
-                              title: l10n.memoryEchoTitle,
-                              description: l10n.memoryEchoDescription,
-                              buttonLabel: l10n.memoryEchoPrimaryAction,
-                              icon: Icons.psychology_alt_rounded,
-                              accentColor: AppPalette.honey,
-                              onPressed: () async {
-                                await audioController.unlockAudio();
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                context.go(MemoryEchoScreen.routePath);
-                              },
+                            SizedBox(
+                              width: cardWidth,
+                              child: GameModeCard(
+                                title: l10n.memoryEchoTitle,
+                                description: l10n.memoryEchoDescription,
+                                buttonLabel: l10n.memoryEchoPrimaryAction,
+                                icon: Icons.psychology_alt_rounded,
+                                accentColor: AppPalette.honey,
+                                onPressed: () async {
+                                  await audioController.unlockAudio();
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+                                  context.go(MemoryEchoScreen.routePath);
+                                },
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-                        SoftPanel(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                l10n.homeParentNoteTitle,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(fontWeight: FontWeight.w800),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                l10n.homeParentNoteBody,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(height: 1.45),
-                              ),
-                            ],
+                        const SizedBox(height: 18),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            l10n.homeParentNoteBody,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: const Color(0xFF607080),
+                              height: 1.55,
+                            ),
                           ),
                         ),
                       ],
@@ -221,11 +225,12 @@ class _FeatureChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppPalette.mist,
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFE7EBF1)),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(

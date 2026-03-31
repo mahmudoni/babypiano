@@ -55,111 +55,111 @@ class _MemoryEchoScreenState extends ConsumerState<MemoryEchoScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: <Color>[
-              Color(0xFFFFFAF3),
-              Color(0xFFF1F0FF),
+              Color(0xFFFFFCF8),
+              Color(0xFFF4F7FB),
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    IconButton.filledTonal(
-                      onPressed: () => context.go('/'),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.memoryEchoTitle,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    IconButton.filledTonal(
-                      onPressed: () => SettingsSheet.show(context),
-                      icon: const Icon(Icons.tune_rounded),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                SoftPanel(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          helperText,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      _MetricBadge(
-                        label: l10n.roundLabel,
-                        value: _sequence.length.toString(),
-                      ),
-                      const SizedBox(width: 10),
-                      _MetricBadge(
-                        label: l10n.bestLabel,
-                        value: _bestRound.toString(),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constraints) {
-                      final padWidth = constraints.maxWidth >= 720
-                          ? (constraints.maxWidth - 16) / 2
-                          : constraints.maxWidth;
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final isWide = constraints.maxWidth >= 940;
+              final horizontalPadding = constraints.maxWidth < 720 ? 20.0 : 32.0;
 
-                      return Wrap(
-                        spacing: 16,
-                        runSpacing: 16,
-                        children: List<Widget>.generate(
-                          laneSpecs.length,
-                          (int index) => SizedBox(
-                            width: padWidth,
-                            child: AspectRatio(
-                              aspectRatio: constraints.maxWidth >= 720 ? 1.45 : 2.1,
-                              child: LanePad(
-                                label: laneSpecs[index].noteLabel,
-                                helper: _isPreviewing
-                                    ? l10n.memoryWatch
-                                    : l10n.tapToPlay,
-                                color: laneSpecs[index].color,
-                                isActive: _activeLane == index,
-                                onTap: () => _handleUserTap(index),
+              return SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  18,
+                  horizontalPadding,
+                  24,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1080),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            IconButton.filledTonal(
+                              onPressed: () => context.go('/'),
+                              icon: const Icon(Icons.arrow_back_rounded),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                l10n.memoryEchoTitle,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.w900),
                               ),
                             ),
-                          ),
+                            IconButton.filledTonal(
+                              onPressed: () => SettingsSheet.show(context),
+                              icon: const Icon(Icons.tune_rounded),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                        const SizedBox(height: 20),
+                        if (isWide)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 4,
+                                child: _MemorySummaryPanel(
+                                  helperText: helperText,
+                                  bestRound: _bestRound,
+                                  round: _sequence.length,
+                                  isPreviewing: _isPreviewing,
+                                  onReplay: _isPreviewing
+                                      ? null
+                                      : () => _startRound(
+                                          extendSequence: false,
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              Expanded(
+                                flex: 6,
+                                child: _MemoryPadsPanel(
+                                  isWide: isWide,
+                                  isPreviewing: _isPreviewing,
+                                  activeLane: _activeLane,
+                                  onTap: _handleUserTap,
+                                ),
+                              ),
+                            ],
+                          ),
+                        if (!isWide) ...<Widget>[
+                          _MemorySummaryPanel(
+                            helperText: helperText,
+                            bestRound: _bestRound,
+                            round: _sequence.length,
+                            isPreviewing: _isPreviewing,
+                            onReplay: _isPreviewing
+                                ? null
+                                : () => _startRound(
+                                    extendSequence: false,
+                                  ),
+                          ),
+                          const SizedBox(height: 18),
+                          _MemoryPadsPanel(
+                            isWide: isWide,
+                            isPreviewing: _isPreviewing,
+                            activeLane: _activeLane,
+                            onTap: _handleUserTap,
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: _isPreviewing
-                        ? null
-                        : () => _startRound(extendSequence: false),
-                    icon: const Icon(Icons.replay_rounded),
-                    label: Text(l10n.replayButtonLabel),
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -177,9 +177,10 @@ class _MemoryEchoScreenState extends ConsumerState<MemoryEchoScreen> {
     if (laneIndex != expected) {
       setState(() {
         _inputIndex = 0;
+        _isPreviewing = true;
         _statusText = context.l10n.memoryTryAgain;
       });
-      await Future<void>.delayed(const Duration(milliseconds: 900));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
       if (mounted) {
         await _startRound(extendSequence: false);
       }
@@ -196,12 +197,13 @@ class _MemoryEchoScreenState extends ConsumerState<MemoryEchoScreen> {
         );
       }
 
-      await ref.read(audioControllerProvider).playCheer();
+      unawaited(ref.read(audioControllerProvider).playCheer());
       setState(() {
         _inputIndex = 0;
+        _isPreviewing = true;
         _statusText = context.l10n.memorySuccess(round);
       });
-      await Future<void>.delayed(const Duration(milliseconds: 900));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
       if (mounted) {
         await _startRound(extendSequence: true);
       }
@@ -215,7 +217,7 @@ class _MemoryEchoScreenState extends ConsumerState<MemoryEchoScreen> {
   }
 
   Future<void> _startRound({required bool extendSequence}) async {
-    await ref.read(audioControllerProvider).unlockAudio();
+    unawaited(ref.read(audioControllerProvider).unlockAudio());
 
     final nextSequence = List<int>.from(_sequence);
     if (nextSequence.isEmpty || extendSequence) {
@@ -231,7 +233,7 @@ class _MemoryEchoScreenState extends ConsumerState<MemoryEchoScreen> {
 
     for (final laneIndex in _sequence) {
       await _flashLane(laneIndex);
-      await Future<void>.delayed(const Duration(milliseconds: 140));
+      await Future<void>.delayed(const Duration(milliseconds: 120));
       if (!mounted) {
         return;
       }
@@ -249,11 +251,114 @@ class _MemoryEchoScreenState extends ConsumerState<MemoryEchoScreen> {
 
   Future<void> _flashLane(int laneIndex) async {
     setState(() => _activeLane = laneIndex);
-    await ref.read(audioControllerProvider).playLane(laneIndex);
-    await Future<void>.delayed(const Duration(milliseconds: 380));
+    unawaited(ref.read(audioControllerProvider).playLane(laneIndex));
+    await Future<void>.delayed(const Duration(milliseconds: 320));
     if (mounted) {
       setState(() => _activeLane = null);
     }
+  }
+}
+
+class _MemorySummaryPanel extends StatelessWidget {
+  const _MemorySummaryPanel({
+    required this.helperText,
+    required this.bestRound,
+    required this.round,
+    required this.isPreviewing,
+    required this.onReplay,
+  });
+
+  final String helperText;
+  final int bestRound;
+  final int round;
+  final bool isPreviewing;
+  final VoidCallback? onReplay;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return SoftPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            helperText,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: <Widget>[
+              _MetricBadge(
+                label: l10n.roundLabel,
+                value: round.toString(),
+              ),
+              const SizedBox(width: 10),
+              _MetricBadge(
+                label: l10n.bestLabel,
+                value: bestRound.toString(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onReplay,
+              icon: const Icon(Icons.replay_rounded),
+              label: Text(
+                isPreviewing ? l10n.memoryWatch : l10n.replayButtonLabel,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemoryPadsPanel extends StatelessWidget {
+  const _MemoryPadsPanel({
+    required this.isWide,
+    required this.isPreviewing,
+    required this.activeLane,
+    required this.onTap,
+  });
+
+  final bool isWide;
+  final bool isPreviewing;
+  final int? activeLane;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return SoftPanel(
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: laneSpecs.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: isWide ? 1.38 : 1.26,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return LanePad(
+            label: laneSpecs[index].noteLabel,
+            helper: isPreviewing ? l10n.memoryWatch : l10n.tapToPlay,
+            color: laneSpecs[index].color,
+            isActive: activeLane == index,
+            enabled: !isPreviewing,
+            onTap: () => onTap(index),
+          );
+        },
+      ),
+    );
   }
 }
 

@@ -24,49 +24,47 @@ class GameModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minWidth: 280,
-        maxWidth: 360,
-      ),
-      child: SoftPanel(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Icon(
-                  icon,
-                  color: accentColor,
-                  size: 28,
-                ),
+    return SoftPanel(
+      padding: const EdgeInsets.all(22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Icon(
+                icon,
+                color: accentColor,
+                size: 24,
               ),
             ),
-            const SizedBox(height: 18),
-            Text(
-              title,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
             ),
-            const SizedBox(height: 10),
-            Text(
-              description,
-              style: theme.textTheme.bodyLarge?.copyWith(height: 1.45),
-            ),
-            const SizedBox(height: 22),
-            ElevatedButton(
+          ),
+          const SizedBox(height: 10),
+          Text(
+            description,
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
               onPressed: onPressed,
               child: Text(buttonLabel),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
